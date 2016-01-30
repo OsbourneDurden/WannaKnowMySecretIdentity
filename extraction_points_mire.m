@@ -70,7 +70,6 @@ for i=1:N
 end
 
 close(1);
-save(['points-', fichier_mire, '.mat'], 'points_monde','points_image');
 
 end
 
