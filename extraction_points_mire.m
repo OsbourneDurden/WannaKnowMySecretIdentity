@@ -62,9 +62,11 @@ for i=1:N
     strcoord=['x=', num2str(coord(1)), ', y=', num2str(coord(2)), ...
         ' et z=', num2str(coord(3))];
     figure(1)
-    title(['Zoomez sur le point ', num2str(i), ' de coordonnées ', strcoord]);
+    title(['Zoomez sur le point ', num2str(i), ' de coordonnées ', ...
+        strcoord, ' et appuyez sur entrée']);
     pause;
-    title(['Selectionnez le point ', num2str(i), ' de coordonnées ', strcoord]);
+    title(['Selectionnez le point ', num2str(i), ' de coordonnées ', ...
+        strcoord, ' et appuyez sur entrée']);
     [points_image(1,i), points_image(2,i)] = ginput();
     zoom out;
 end
