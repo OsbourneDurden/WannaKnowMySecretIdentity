@@ -4,7 +4,7 @@ if exist('workspace.mat','file')
     load('workspace.mat');
 else
     cond=2;
-    while cond < 1
+    while cond > 1
         %% Initialisation des variables
         fichier_mire='img/vue droite0.png';
         fichier_mire2='img/vue gauche0.png';
