@@ -18,14 +18,15 @@ if exist('workspace.mat','file')
         ['Refaire les points 3D, et points_image de la mire,', ... 
         'vue gauche et droite'], ...
         'Charger les données existantes');
-    if K == 1;
+    if K == 1
         if exist('workspace.mat.old','file')
             delete('workspace.mat.old');
         end
         movefile('workspace.mat','workspace.mat.old')
         [ points_monde, points_image_D, points_image_G ] = creation_workspace();
+    elseif K == 2
+        load('workspace.mat');
     end
-    
 else
     %% Initialisation des variables
     fichier_mire='img/vue droite0.png';
