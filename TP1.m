@@ -3,7 +3,7 @@ clear variables;
 close all;
 
 %% Initialisation des variables
-fichier_mire='img/vue droite0.png';
+fichier_mire = 'img/vue droite0.png';
 
 %% Extraction des points 3D et des points image
 [ points_monde, points_image ] = extraction_points_mire( fichier_mire );
