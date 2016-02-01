@@ -27,7 +27,8 @@ for i=1:N
 end
 
 %% Résolution du système ||A*X|| = 0
-[~,~,X] = svd(A);
-matrice_projection = reshape(X(:,end)/X(end,end),4,3)';
+[~,~,V] = svd(A);
+X=V(:,end);
+matrice_projection = reshape(X/X(end),4,3)';
 
 end
