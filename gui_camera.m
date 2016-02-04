@@ -99,7 +99,8 @@ if get(hObject,'Value')
     while get(hObject,'Value')
         tic;
         img=snapshot(cam);
-        %ici les choses à faire
+        filename=['img_genere/img',num2str(nb_frames+1),'.jpg'];
+        imwrite(img,filename,'jpg');
         image(img);
         time=time+toc;
         nb_frames=nb_frames+1;
