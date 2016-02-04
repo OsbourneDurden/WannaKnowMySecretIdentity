@@ -4,12 +4,13 @@ close all;
 
 %% Initialisation des variables
 fichier_mire = 'img/vue droite0.png';
-
-%% Extraction des points 3D et des points image
-[ points_monde, points_image ] = extraction_points_mire( fichier_mire );
+load('workspace.mat');
+points_image = points_image_D;
+clear points_image_D points_imageG;
 
 %% Résolution du problème
-[ matrice_projection, ~, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , points_image );
+[ ~, K, R, T ] = calcul_matrice_projection_dlt( points_monde , points_image );
+matrice_projection = K * [R T];
 [ points_image_projete ] = projection_points( points_monde , matrice_projection );
 [ erreur_projection ] = calcul_erreur_projection( points_image , points_image_projete );
 

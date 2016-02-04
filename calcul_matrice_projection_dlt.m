@@ -1,4 +1,4 @@
-function [ matrice_projection ] = calcul_matrice_projection_dlt( points_monde , points_image )
+function [ matrice_projection, matrice_K, matrice_R, matrice_T ] = calcul_matrice_projection_dlt( points_monde , points_image )
 %% Calcul de la matrice de projection via DLT
 %
 % INPUT : [points_monde, points_image] où "points_monde" est une matrice
@@ -25,5 +25,13 @@ end
 [~,~,V] = svd(A);
 X=V(:,end);
 matrice_projection = reshape(X/X(end),4,3)';
+[R K] = decomposition_qr_householder(matrice_projection(:,1:3)');
+R=R';
+K=K';
+T = K\matrice_projection(:,4);
+
+matrice_T = T.*K(end);
+matrice_R = R.*K(end);
+matrice_K = K./K(end);
 
 end

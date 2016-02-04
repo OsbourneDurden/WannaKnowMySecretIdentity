@@ -15,7 +15,7 @@ function [ points_image ] = minimisation_erreur_projection( points_monde, points
 pi = points_image;
 step = 0.01;
 err = 1000;
-[ matrice_projection ] = calcul_matrice_projection_dlt( points_monde , pi );
+[ matrice_projection, ~, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , pi );
 [ pip ] = projection_points( points_monde , matrice_projection );
 [ new_err ] = calcul_erreur_projection( pi , pip );
 disp(['Erreur de projection avant minimisation : ', num2str(new_err), ' pixels']);
