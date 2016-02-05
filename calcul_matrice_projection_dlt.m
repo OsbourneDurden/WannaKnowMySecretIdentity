@@ -25,13 +25,11 @@ end
 [~,~,V] = svd(A);
 X=V(:,end);
 matrice_projection = reshape(X/X(end),4,3)';
-[R K] = decomposition_qr_householder(matrice_projection(:,1:3)');
-R=R';
-K=K';
-T = K\matrice_projection(:,4);
 
-matrice_T = T.*K(end);
+[R, K] = decomposition_qr(matrice_projection(:,1:3));
+T = K \ matrice_projection(:,4); 
 matrice_R = R.*K(end);
+matrice_T = T.*K(end);
 matrice_K = K./K(end);
 
 end

@@ -9,8 +9,7 @@ points_image = points_image_D;
 clear points_image_D points_imageG;
 
 %% Résolution du problème
-[ ~, K, R, T ] = calcul_matrice_projection_dlt( points_monde , points_image );
-matrice_projection = K * [R T];
+[ matrice_projection, ~, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , points_image );
 [ points_image_projete ] = projection_points( points_monde , matrice_projection );
 [ erreur_projection ] = calcul_erreur_projection( points_image , points_image_projete );
 
