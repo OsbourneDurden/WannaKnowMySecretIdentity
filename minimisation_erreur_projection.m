@@ -12,10 +12,10 @@ function [ points_image ] = minimisation_erreur_projection( points_monde, points
 % arrive à minimiser l'erreur de projection de cette manière.
 
 %% Initialisation des variables
-pi=points_image;
-step=0.01;
-err=1000;
-[ matrice_projection ] = calcul_matrice_projection_dlt( points_monde , pi );
+pi = points_image;
+step = 0.01;
+err = 1000;
+[ matrice_projection, ~, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , pi );
 [ pip ] = projection_points( points_monde , matrice_projection );
 [ new_err ] = calcul_erreur_projection( pi , pip );
 disp(['Erreur de projection avant minimisation : ', num2str(new_err), ' pixels']);
@@ -30,15 +30,15 @@ while err >= new_err
     
     if err >= new_err
         %% Recherche du pixel le plus éloigné 
-        diff=abs(mean(pip-pi));
-        indice_pixel=find( max(diff) == diff);
+        diff = abs(mean(pip-pi));
+        indice_pixel = find( max(diff) == diff);
         
-        difference_pixel=pip(:,indice_pixel)-pi(:,indice_pixel);
-        eloignement_pixel=abs(difference_pixel);
+        difference_pixel = pip(:,indice_pixel)-pi(:,indice_pixel);
+        eloignement_pixel = abs(difference_pixel);
         
         %% Recherche de la coordonée à réduire d'un certain pas
         coordonnee = find(max(eloignement_pixel) == eloignement_pixel);
-        pi(coordonnee, indice_pixel)=pi(coordonnee, indice_pixel) + ...
+        pi(coordonnee, indice_pixel) = pi(coordonnee, indice_pixel) + ...
             sign(difference_pixel(coordonnee))*step;
         
     else

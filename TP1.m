@@ -3,7 +3,11 @@ clear variables;
 close all;
 
 %% Initialisation des variables
+<<<<<<< HEAD
 fichier_mire='img/img169.jpg';
+=======
+fichier_mire = 'img/vue droite0.png';
+>>>>>>> refs/remotes/origin/master
 
 %% Extraction des points 3D et des points image
 [ points_monde, points_image ] = extraction_points_mire( fichier_mire );
@@ -14,7 +18,7 @@ while erreur_projection > 1
     [ points_image, erreur_projection ] = minimisation_erreur_projection( points_monde, points_image );
 end
 %% Résolution du problème
-[ matrice_projection ] = calcul_matrice_projection_dlt( points_monde , points_image );
+[ matrice_projection, ~, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , points_image );
 [ points_image_projete ] = projection_points( points_monde , matrice_projection );
 [ erreur_projection ] = calcul_erreur_projection( points_image , points_image_projete );
 
