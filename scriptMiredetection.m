@@ -6,13 +6,14 @@ figure;
 
 while true
     img = snapshot(cam);
+    img = img(1:2:720,1:2:1280,:);
     %img =  imread('img/mire.png');
     imshow(img);
     
     %corners = cornerDetector(img);
-    corners = corner(mean(img,3),50);
-    %hold on;
-    %plot(corners(:,1),corners(:,2),'b+');
+    corners = corner(mean(img,3),20);
+    hold on;
+    plot(corners(:,1),corners(:,2),'b+');
     
     [Height, Width, ~] = size(img);
     mire = [];
