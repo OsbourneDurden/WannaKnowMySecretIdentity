@@ -12,12 +12,12 @@ function imgCorner = cornerDetector(imgSrc)
      Trace = (Ix.^2) + (Iy.^2);
      
 %% Réponse du detecteur de Harris
-    R = (Det + 0.04* (Trace.^2));
+    R = (Det - 0.04* (Trace.^2));
 
     maxR = max(max(R,[],2)');   % valeur max de la réponse (plus forts coins)
     %imgCorner = (R > (mean2(R)*80)); % Seuillage avec 40% du plus fort coin
     R = R/mean2(R);
-    R(R < (mean2(R)/10)) = 0;
+    R(R < (mean2(R)/2)) = 0;
 
     
 %% Maximums locaux
@@ -40,4 +40,8 @@ function imgCorner = cornerDetector(imgSrc)
              end
         end
     end
+    [I(:,2),I(:,1)] = find(imgCorner == 1);
+    imgCorner = I;
+    
+    %coin = sum(imgCorner(:)==1)
 end
