@@ -6,12 +6,12 @@ figure;
 
 while true
     img = snapshot(cam);
-    img = img(1:2:720,1:2:1280,:);
+    img = img(1:3:720,1:3:1280,:);
     %img =  imread('img/mire.png');
     imshow(img);
     
     %corners = cornerDetector(img);
-    corners = corner(mean(img,3),20);
+    corners = corner(mean(img,3),70 );
     hold on;
     plot(corners(:,1),corners(:,2),'b+');
     
@@ -37,7 +37,7 @@ while true
     
     %% Extraire les 4 premiers points mire possible
     [selec, ~] = size(mire);
-    if (isempty(mire)==0) && (selec > 4)
+    if (isempty(mire)==0) && (selec > 36)
         j = 0;
         k = 1;
         while (k < selec)
@@ -55,16 +55,19 @@ while true
                  k = k + 1;
             end       
         end  
-        mire = mire(1:4,:);  
+        mire = mire(1:36,:);  
     end
     
-    if isempty(mire) == 0
+    if (isempty(mire) == 0)&& (selec > 4)
         hold on;
         plot(mire(:,1),mire(:,2),'r+');
+%         homographArival = [0,1,1,0 ; 0,0,1,1 ; 1,1,1,1];
+%         homographDeparture = [mire(1,2),mire(2,2),mire(3,2),mire(4,2) ; mire(1,1),mire(2,1),mire(3,1),mire(4,1) ; 1,1,1,1];
+%     
+%         H = homographieNico(homographArival,homographDeparture)
     end
     
-    
-
+   
     
             
     %hold on;
