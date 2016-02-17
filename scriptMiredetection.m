@@ -1,78 +1,137 @@
-clear variables;
+clear all;
 close all;
 
-cam = webcam(1);
+%cam = webcam(1);
+%cam.Resolution = cam.AvailableResolutions{end};
 figure;
 
+g=0;
+
 while true
-    img = snapshot(cam);
-    img = img(1:3:720,1:3:1280,:);
-    %img =  imread('img/mire.png');
-    imshow(img);
+    %% Acquisition
+    %img = snapshot(cam);
+
+    g=g+1;
+    img =  imread(['rec/', num2str(g,'%05d'), '.png']);
+    pause(0.02);
     
+    [Height, Width, ~] = size(img);
+    
+    
+    
+    %% detection coins    
     %corners = cornerDetector(img);
-    corners = corner(mean(img,3),70 );
+    corners = corner(mean(img,3));
+    
+    
+    % afficher coins
+    subplot(1,4,1);
+    imshow(img);
     hold on;
     plot(corners(:,1),corners(:,2),'b+');
     
-    [Height, Width, ~] = size(img);
+    
+    
+    %% detection zones rouges
+    
+    % Isolation des zones où le rouge est plus fort que le vert et le bleu
+    imgRedOnly = ( (img(:,:,1)>(1.2*img(:,:,2)) & (img(:,:,1)>(1.2*img(:,:,3)) )));
+    
+    % Erosion
+    mask = [0,1,0 ; 1,1,1 ; 0,1,0];
+    imgRedOnly = conv2(double(imgRedOnly),double(mask),'same')>4;
+    imgRedOnly = conv2(double(imgRedOnly),double(mask),'same')>4;
+    imgRedOnly = conv2(double(imgRedOnly),double(mask),'same')>4;
+    imgRedOnly = conv2(double(imgRedOnly),double(mask),'same')>4;
+    imgRedOnly = conv2(double(imgRedOnly),double(mask),'same')>4;
+    
+    % Dilatation
+    imgRedOnly = conv2(double(imgRedOnly),double(ones(15)),'same');
+    
+    
+    % afficher zones rouges et les coins
+    subplot(1,4,2);
+    imshow(imgRedOnly);
+    hold on;
+    plot(corners(:,1),corners(:,2),'b+');
+    
+    
+    
+    %% croisement zones rouges + coins = points mire
     mire = [];
-    mask = 1;
-    for i = 1:size(corners(:,1))
-        if (corners(i,1) > mask) && (corners(i,2) > mask) && (corners(i,1) < (Width-mask)) && (corners(i,2) < (Height-mask))
-            %moyLocalRGB     = mean2(img(corners(i,1)-5:corners(i,1)+5, corners(i,2)-5:corners(i,2)+5, :));
-            moyLocalRed     = round(mean2(img(corners(i,2)-mask:corners(i,2)+mask, corners(i,1)-mask:corners(i,1)+mask, 1)));
-            moyLocalGreen   = round(mean2(img(corners(i,2)-mask:corners(i,2)+mask, corners(i,1)-mask:corners(i,1)+mask, 2)));
-            moyLocalBlue    = round(mean2(img(corners(i,2)-mask:corners(i,2)+mask, corners(i,1)-mask:corners(i,1)+mask, 3)));
-            moyLocalRGB     = round((moyLocalBlue + moyLocalGreen + moyLocalRed)/3);
-            
-%             if (moyLocalBlue > (0.95*moyLocalRGB)) && (moyLocalRed < (1.05*moyLocalRGB)) && (moyLocalGreen < (1.05*moyLocalRGB))
-%             	mire = [mire ; corners(i,:)];
-%             end 
-            if (moyLocalRed > (moyLocalBlue)) && (moyLocalRed > (moyLocalGreen))
-            	mire = [mire ; corners(i,:)];
-            end 
+    [Nc, ~] = size(corners);
+    for i=1:Nc
+        if imgRedOnly( corners(i,2), corners(i,1) )
+            mire = [mire; corners(i,:)];
         end
     end
     
-    %% Extraire les 4 premiers points mire possible
-    [selec, ~] = size(mire);
-    if (isempty(mire)==0) && (selec > 36)
-        j = 0;
-        k = 1;
-        while (k < selec)
-            j = j + 1;
-            if j == selec
-                j = 1;
-            end
-            if mean2(img(mire(j,2)-mask:mire(j,2)+mask,mire(j,1)-mask:mire(j,1)+mask,1)) < mean2(img(mire(j+1,2)-mask:mire(j+1,2)+mask,mire(j+1,1)-mask:mire(j+1,1)+mask,1))
-                tmp = mire(j+1, :);
-                mire(j+1, :) = mire(j, :);
-                mire(j, :) = tmp;
-
-                k = 1;
-            else
-                 k = k + 1;
-            end       
-        end  
-        mire = mire(1:36,:);  
-    end
     
-    if (isempty(mire) == 0)&& (selec > 4)
+    % afficher mire
+    subplot(1,4,3);
+    imshow(img);
+    if (isempty(mire) == 0)
         hold on;
-        plot(mire(:,1),mire(:,2),'r+');
-%         homographArival = [0,1,1,0 ; 0,0,1,1 ; 1,1,1,1];
-%         homographDeparture = [mire(1,2),mire(2,2),mire(3,2),mire(4,2) ; mire(1,1),mire(2,1),mire(3,1),mire(4,1) ; 1,1,1,1];
-%     
-%         H = homographieNico(homographArival,homographDeparture)
+        plot(mire(:,1),mire(:,2),'b+');
     end
     
-   
     
-            
-    %hold on;
-    %plot(mire(:,1),mire(:,2),'g+');
+    
+    %% regroupement des points mire proches
+    % recherche de la plus grande distance séparant deux points mire
+    max=0;
+    [Nm, ~] = size(mire);
+    for i=1:Nm
+        for j=1:Nm
+            dist = distance( mire(i,2), mire(i,1), mire(j,2), mire(j,1) );
+            if dist > max 
+                max = dist;
+            end
+        end
+    end
+    
+    % recherche des points mire proches entre eux par rapport à max
+    [Nm, ~] = size(mire);
+    mireBis = [];
+    for i=1:Nm
+        alias = [];
 
+        for j=1:Nm
+            dist = distance( mire(i,2), mire(i,1), mire(j,2), mire(j,1) );
+
+            if (dist < (max/15)) & (dist > 0)
+                if isempty( find( alias == j ) ) 
+
+                    alias = [alias ; j];
+
+                end
+            end
+        end
+        
+        % Pour un groupe de points mire proches, établir un point médian
+        if isempty(alias) == 0
+            posMoy = mean([mire(i,:) ; mire(alias,:)]);
+            if isempty(mireBis)
+                mireBis = [mireBis ; posMoy];             
+            elseif isempty( find( mireBis(:,1) == posMoy(1) ) ) &  isempty( find( mireBis(:,2) == posMoy(2) ) )                   
+                mireBis = [mireBis ; posMoy];             
+            end
+        else
+        % Si point mire isolé, ne rien faire 
+            mireBis = [mireBis ; mire(i,:)];             
+        end
+    end
+    
+    
+    % afficher mire sans dédoublement
+    subplot(1,4,4);
+    imshow(img);
+    if (isempty(mireBis) == 0)
+        hold on;
+        plot(mireBis(:,1),mireBis(:,2),'b+');
+    end
+    
+    
+    
 
 end
-%imshow(cornerDetector(imread('img/domino.jpg')));
