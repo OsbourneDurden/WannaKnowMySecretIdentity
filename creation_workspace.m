@@ -1,4 +1,4 @@
-function [ points_monde, points_image_D, points_image_G ] = creation_workspace()
+function [ points_monde, points_image ] = creation_workspace()
 %%  Mise en place des points 3D et des points_images de la mire gauche et droite
 %
 % INPUT : []
@@ -15,30 +15,46 @@ function [ points_monde, points_image_D, points_image_G ] = creation_workspace()
 
 if exist('workspace.mat','file')
     K = menu('Fichier workspace.mat existe déjà', ...
-        ['Refaire les points 3D, et points_image de la mire,', ... 
-        'vue gauche et droite'], ...
+        'Refaire les points 3D, et points_image de la mire', ...
         'Charger les données existantes');
     if K == 1
         if exist('workspace.mat.old','file')
             delete('workspace.mat.old');
         end
         movefile('workspace.mat','workspace.mat.old')
-        [ points_monde, points_image_D, points_image_G ] = creation_workspace();
+        [ points_monde, points_image ] = creation_workspace();
     elseif K == 2
         load('workspace.mat');
     end
 else
     %% Initialisation des variables
-    fichier_mire='img/vue droite0.png';
-    fichier_mire2='img/vue gauche0.png';
+    fichier_mire='etc/img169.jpg';
 
     %% Extraction des points 3D et des points image
-    [ points_monde, points_image_D ] = extraction_points_mire( fichier_mire );
-    [ ~, points_image_G ] = extraction_points_mire( fichier_mire2 , points_monde );
+    [ points_monde, points_image ] = extraction_points_mire( fichier_mire );
+    [ points_image, erreur_projection ] = minimisation_erreur_projection( points_monde, points_image );
+    cond = erreur_projection > 1;
+    while cond
+        [ points_monde, points_image ] = extraction_points_mire( fichier_mire , points_monde );
+        [ points_image, erreur_projection ] = minimisation_erreur_projection( points_monde, points_image );
+        cond = erreur_projection > 1;
+    end
 
     %% Résolution du problème
-    [ points_image_D ] = minimisation_erreur_projection( points_monde, points_image_D );
-    [ points_image_G ] = minimisation_erreur_projection( points_monde, points_image_G );
+    [ matrice_projection, K, R, T ] = calcul_matrice_projection_dlt( points_monde , points_image );
 
-    save( 'workspace.mat', 'points_monde', 'points_image_D', 'points_image_G' );
+    %% Affichage des nouveaux points projeté via la matrice de projection
+    fig = figure;
+    imshow(fichier_mire);
+    hold on;
+    for i=1:length(points_image)
+        plot(points_image(1,i),points_image(2,i),'ob');
+        plot(points_image_projete(1,i),points_image_projete(2,i),'*r');
+    end
+    clear i;
+    pause;
+    close(fig);
+
+    save('workspace.mat','K');
+    
 end

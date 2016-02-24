@@ -12,16 +12,16 @@ dim_res=str2num(str_res);
 hold on;
 axis ij;
 img=snapshot(cam);
-image(img);
+h = imshow(img);
 axis([0 dim_res(1) 0 dim_res(2)]);
-nb_frames=100;
+nb_frames=1000;
 time=0;
 cond=nb_frames;
 while cond
     tic;
     img=snapshot(cam);
-    %ici les choses à faire
-    image(img);
+    set(h,'Cdata',img);
+    drawnow;
     cond=cond-1;
     time=time+toc;
 end

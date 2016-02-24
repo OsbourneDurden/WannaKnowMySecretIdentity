@@ -2,7 +2,7 @@ clear variables;
 close all;
 
 addpath(genpath(pwd));
-load('workspace_cam.mat')
+load('workspace.mat')
 porsche = plyread('big_porsche.ply');
 porsche_vertex = [porsche.vertex.z+4 porsche.vertex.x+4 porsche.vertex.y];
 porsche_faces = zeros(length(porsche.face.vertex_indices),3);
@@ -23,8 +23,7 @@ while true
     tstart = tic;
     img=snapshot(cam);
     t1=toc(tstart);
-    set(h,'Cdata',img);
-    drawnow;
+    
     
     t2=toc(tstart);
     [points, s] = detectCheckerboardPoints(img);
@@ -39,8 +38,8 @@ while true
         corners(:,2) = points(s(1)-1,:)';
         corners(:,3) = points(end-s(1)+2,:)';
         corners(:,4) = points(end,:)';
-        pts_monde = [0 0; 1 0; 0 1; 1 1]';
-        [ matrice_projection, K, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , points_image );
+        pts_monde = [0 0; 0 1; 1 0; 1 1]';
+        
         [ H ] = calcul_matrice_homographie_dlt( pts_monde , corners );
         
         Pt = K\H;
@@ -54,12 +53,11 @@ while true
         [ new_porsche_vertex ] = projection_points( porsche_vertex' , P2 );
         delete(pt);
         pt = patch('Faces',porsche_faces,'Vertices',new_porsche_vertex','FaceColor','none','EdgeColor','red');
-        
-        % A FAIRE REFAIRE LA MATRICE DE PROJECTION AVEC D'AUTRES AXE
-        % X Z Y au lieu de X Y Z
     else
         delete(pt);
     end
+    set(h,'Cdata',img);
+    drawnow;
     t4=toc(tstart);
     disp([t1 t2 t3 ceil(1/t4)]);
 end
