@@ -1,7 +1,6 @@
 clear variables;
 close all;
-
-
+addpath(genpath(pwd));
 
 cam = webcam(1);
 cam.Resolution=cam.AvailableResolutions{end};
@@ -13,6 +12,7 @@ while true
     img = snapshot(cam);
     imshow(img);
     [points, s] = detectCheckerboardPoints(img);
+    
     [a, MSGID] = lastwarn();
     warning('off', MSGID)
     
@@ -24,7 +24,4 @@ while true
         corners(4,:) = points(end,:);
         plot(corners(:,1),corners(:,2),'or');
     end
-    
-    
-    
 end

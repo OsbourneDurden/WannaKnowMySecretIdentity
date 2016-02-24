@@ -1,13 +1,10 @@
 %% Initialisation du workspace
 clear variables;
 close all;
+addpath(genpath(pwd));
 
 %% Initialisation des variables
-<<<<<<< HEAD
 fichier_mire='img/img169.jpg';
-=======
-fichier_mire = 'img/vue droite0.png';
->>>>>>> refs/remotes/origin/master
 
 %% Extraction des points 3D et des points image
 [ points_monde, points_image ] = extraction_points_mire( fichier_mire );

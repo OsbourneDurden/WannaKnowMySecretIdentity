@@ -1,5 +1,6 @@
 close all;
 clear variables;
+addpath(genpath(pwd));
 
 cam=webcam(1);
 cam.Resolution=cam.AvailableResolutions{end};

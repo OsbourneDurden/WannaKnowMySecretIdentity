@@ -1,6 +1,7 @@
 clear variables;
 close all;
 
+addpath(genpath(pwd));
 load('workspace_cam.mat')
 porsche = plyread('big_porsche.ply');
 porsche_vertex = [porsche.vertex.z+4 porsche.vertex.x+4 porsche.vertex.y];
@@ -15,12 +16,16 @@ porsche_faces = porsche_faces+1;
 figure;
 cam = webcam(1);
 cam.Resolution=cam.AvailableResolutions{end};
+h=imshow(snapshot(cam));
+pt = patch('Faces',porsche_faces,'Vertices',porsche_vertex,'FaceColor','none','EdgeColor','none');
 
 while true
     tstart = tic;
     img=snapshot(cam);
     t1=toc(tstart);
-    imshow(img);
+    set(h,'Cdata',img);
+    drawnow;
+    
     t2=toc(tstart);
     [points, s] = detectCheckerboardPoints(img);
     [a, MSGID] = lastwarn();
@@ -47,12 +52,14 @@ while true
         P2 = K * Rt;
         
         [ new_porsche_vertex ] = projection_points( porsche_vertex' , P2 );
-        hold on;
-        patch('Faces',porsche_faces,'Vertices',new_porsche_vertex','FaceColor','none','EdgeColor','red');
-        hold off;
+        delete(pt);
+        pt = patch('Faces',porsche_faces,'Vertices',new_porsche_vertex','FaceColor','none','EdgeColor','red');
+        
         % A FAIRE REFAIRE LA MATRICE DE PROJECTION AVEC D'AUTRES AXE
         % X Z Y au lieu de X Y Z
+    else
+        delete(pt);
     end
     t4=toc(tstart);
-    %disp([t1 t2 t3 ceil(1/t4)]);
+    disp([t1 t2 t3 ceil(1/t4)]);
 end

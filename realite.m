@@ -1,6 +1,7 @@
 %% Initialisation du workspace
 clear variables;
 close all;
+addpath(genpath(pwd));
 
 %% Initialisation des variables
 fichier_mire='img/img169.jpg';
