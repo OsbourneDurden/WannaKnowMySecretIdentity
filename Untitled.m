@@ -1,0 +1,1 @@
+cam=webcam(1);

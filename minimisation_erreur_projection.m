@@ -1,4 +1,4 @@
-function [ points_image ] = minimisation_erreur_projection( points_monde, points_image )
+function [ points_image, new_err ] = minimisation_erreur_projection( points_monde, points_image )
 %% Minimisation de l'erreur de projection d'un problème
 %
 % INPUT : [points_monde, points_image] où points_monde est une matrice
