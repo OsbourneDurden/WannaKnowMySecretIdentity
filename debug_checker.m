@@ -1,10 +1,12 @@
 clear variables;
 close all;
 
-load('workspace_pts_checker');
+img = imread('imgs/img6.jpg');
+ [ points_plan, points ] = detection_mire( img );
 
 imshow(img);
 hold on;
+plot(points(:,1),points(:,2),'*b'); 
 % plot(points(:,1),points(:,2),'ob');
 % plot(points(1,1),points(1,2),'or');
 % plot(points(2,1),points(2,2),'og');
