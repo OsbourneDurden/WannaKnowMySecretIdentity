@@ -1,56 +1,52 @@
 close all;
 clear variables;
-tic;
+
 addpath(genpath(pwd));
 load('workspace.mat')
-
-v = VideoReader('etc/test_mire_sd_better.mp4');
-v.CurrentTime = 36;
-h = imshow(readFrame(v));
+scale = 1;
+v = VideoReader('etc/test_mire_sd.mp4');
+h = imshow(imresize(readFrame(v),1/scale));
 hold on;
 nb_fr = 1;
-time=0;
 
-porsche = ply_to_patch('porsche.ply', 0.1);
+porsche = ply_to_patch('trophycup.ply', 0.1);
 pt = patch('Faces',porsche.faces,'Vertices',porsche.vertex,'FaceColor','none','EdgeColor','none');
 drawnow;
-
+time=0;
 cond = true;
-toc
+
 while cond
-    tic;
+    tstart = tic;
     video = readFrame(v);
-    
-    [ pts_monde, points, s ] = detection_mire( video );
+    t1 = toc(tstart);
+    video2 = imresize(video,1/scale);
+    [ pts_monde, points, s ] = detection_mire( video2 );
+    t2 = toc(tstart);
     [a, MSGID] = lastwarn();
     if ~isempty(MSGID)
         warning('off', MSGID);
     end
     corners = zeros(2,4);
+    t3=0;t4=0;t5=0;
     if max(s) ~= 0
         H = calcul_matrice_homographie_dlt( pts_monde , points );
+        t3 = toc(tstart);
         P2 = projection_3D_2D( K, H );
-        
-        %temporaire, pour tester Z
-        altitude_pts_monde = 0;
-        points_monde_2 = vertcat(repmat(0:s(1),1,s(2)+1), ...
-        reshape(repmat(0:s(2),s(1)+1,1),1,prod(s+1)), ...
-        altitude_pts_monde*ones(1,prod(s+1)));
-        [ new_points_monde ] = projection_points( points_monde_2 , P2 );  
-        delete(pt)
-        pt = plot(new_points_monde(1,:),new_points_monde(2,:),'*r');
-        
-        %[ new_porsche_vertex ] = projection_points( porsche.vertex' , P2 );
-        %delete(pt);
-        %pt = patch('Faces',porsche.faces,'Vertices',new_porsche_vertex','FaceColor','none','EdgeColor','red');
+        [ new_porsche_vertex ] = projection_points( porsche.vertex' , P2 );
+        t4 = toc(tstart);
+        delete(pt);
+        pt = patch('Faces',porsche.faces,'Vertices',new_porsche_vertex','FaceColor','none','EdgeColor','red');
+        t5 = toc(tstart);
     else
         delete(pt);
     end
-    set(h,'Cdata',video);
+    set(h,'Cdata',video2);
     drawnow;
-
+    t6 = toc(tstart);
+    %disp([t1 t2 t3 t4 t5 t6]);
     nb_fr = nb_fr + 1;
     time= time + toc;
-    cond = v.CurrentTime < 39;
+    nb_fps = 1/toc(tstart);
+    cond = hasFrame(v);
 end
 nb_fps = (nb_fr-1)/time;
