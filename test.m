@@ -1,37 +1,15 @@
-%% Initialisation du workspace
-clear variables;
+clear all;
 close all;
-addpath(genpath(pwd));
 
-%% Initialisation des variables
-load('workspace.mat');
-points_image = points_image_D;
-clear points_image_G;
-fichier_mire = 'img/vue droite0.png';
+load('workspace.mat')
+[ M, K, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , points_image.*1 )
 
-cube_vertices = [0 0 0; ...
-    0 1 0; ...
-    1 1 0; ...
-    1 0 0; ...
-    0 0 1; ...
-    0 1 1; ...
-    1 1 1; ...
-    1 0 1]*2.5;
+[ M, K, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , points_image.*0.5 )
 
-cube_faces = [1 2 3 4; ...
-    2 6 7 3; ...
-    4 3 7 8; ...
-    1 5 8 4; ...
-    1 2 6 5; ...
-    5 6 7 8];
+temp = points_image(1,:);
+points_image(1,:) = points_image(2,:);
+points_image(2,:) = temp;
 
-%% Résolution du problème
-[ matrice_projection ] = calcul_matrice_projection_dlt( points_monde , points_image );
-[ points_image_projete ] = projection_points( points_monde , matrice_projection );
-[ erreur_projection ] = calcul_erreur_projection( points_image , points_image_projete );
+[ M, K, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , points_image.*1 )
 
-%% Projection d'un cube
-[ points_cube ] = projection_points( cube_vertices' , matrice_projection );
-cube_new_vertices=vertcat(points_cube,ones(1,length(points_cube)));
-imshow(fichier_mire);
-patch('Faces',cube_faces,'Vertices',points_cube','FaceColor','b');
+[ M, K, ~, ~ ] = calcul_matrice_projection_dlt( points_monde , points_image.*0.5 )
