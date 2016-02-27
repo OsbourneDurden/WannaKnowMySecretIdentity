@@ -34,7 +34,7 @@ else
 end
 
 points_image = zeros(2,N);
-figure(1);
+fig = figure;
 imshow(fichier_mire); % imshow ne permet pas de déformer les pixels
 
 %% Choix utilisateur des points sur la mire
@@ -54,8 +54,8 @@ for i=1:N
         points_monde(:,i) = coord;
         disp('Zoomez et sélectionnez le point sur le graphique');
     elseif nargin == 2
-        % Si on a "points_monde", on a directement les coordonées pour chaque
-        % point
+        % Si on a "points_monde", on a directement les coordonées
+        % pour chaque point
         coord = points_monde(:,i)';
     end
     
@@ -70,8 +70,6 @@ for i=1:N
     [points_image(1,i), points_image(2,i)] = ginput();
     zoom out;
 end
-
-close(1);
+close( fig );
 
 end
-

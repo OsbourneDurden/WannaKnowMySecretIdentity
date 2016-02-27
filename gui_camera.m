@@ -92,18 +92,18 @@ function togglebutton1_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of togglebutton1
 
 if get(hObject,'Value')
-    cam=webcam(1);
-    cam.Resolution=cam.AvailableResolutions{end};
-    time=0;
-    nb_frames=0;
+    cam = webcam(1);
+    cam.Resolution = cam.AvailableResolutions{end};
+    time = 0;
+    nb_frames = 0;
     while get(hObject,'Value')
         tic;
-        img=snapshot(cam);
-        filename=['img_genere/img',num2str(nb_frames+1),'.jpg'];
-        imwrite(img,filename,'jpg');
+        img = snapshot(cam);
+        filename = ['img_genere/img', num2str(nb_frames+1), '.jpg'];
+        imwrite(img, filename, 'jpg');
         image(img);
-        time=time+toc;
-        nb_frames=nb_frames+1;
+        time = time + toc;
+        nb_frames = nb_frames + 1;
     end
     clear cam;
 end

@@ -15,20 +15,21 @@ function [ matrice_resultante ] = dlt( points_monde , points_image )
 % travailler avec le plan xOy pour le calcul d'homographie.
 
 %% Initialisation des variables
-[dim, N] = size(points_monde);
-Mi = vertcat(points_monde, ones(1,N));
+[ nb_dim, N ] = size( points_monde );
+dim = nb_dim + 1;
+Mi = vertcat( points_monde, ones(1,N) );
 mi = points_image;
-A = zeros(2*N,3*dim);
+A = zeros( 2 * N, 3 * dim );
 
 %% Initialisation de A
-for i=1:N
-    A(2*i-1,:)=[zeros(1,dim) -Mi(:,i)' mi(2,i)*Mi(:,i)' ];
-    A(2*i,:)=[Mi(:,i)' zeros(1,dim) -mi(1,i)*Mi(:,i)' ];
+for i = 1:N
+    A( 2*i-1, : )  = [ zeros(1,dim) -Mi(:,i)' mi(2,i)*Mi(:,i)' ];
+    A( 2*i, : ) = [ Mi(:,i)' zeros(1,dim) -mi(1,i)*Mi(:,i)' ];
 end
 
 %% Résolution du système ||A*X|| = 0
-[~,~,V] = svd(A);
-X=V(:,end);
-matrice_resultante = reshape(X/X(end),dim,3)';
+[ ~, ~, V ] = svd(A);
+X = V(:,end);
+matrice_resultante = reshape( X / X(end) , dim , 3 )';
 
 end

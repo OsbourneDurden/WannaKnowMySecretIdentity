@@ -12,13 +12,13 @@ function [ points_image ] = projection_points( points_monde , matrice_projection
 
 %% Initialisation des variables
 P = matrice_projection;
-N = length(points_monde);
-Mi = vertcat(points_monde, ones(1,N));
-Y = zeros(3,N);
-Mp = zeros(2,N);
+N = length( points_monde );
+Mi = vertcat( points_monde, ones(1,N) );
+Y = zeros( 3, N );
+Mp = zeros( 2, N );
 
 %% Calcul de chaque point dans le plan image
-for i=1:N
+for i = 1:N
     Y(:,i) = P * Mi(:,i);
     Mp(:,i) = Y(1:2,i)/Y(3,i);
 end
