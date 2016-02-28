@@ -10,7 +10,6 @@ load( 'etc/trophycup.mat' ); % récupération du modèle à ajouter
 %% Initialisation de la caméra
 cam = webcam( 1 );
 cam.Resolution = cam.AvailableResolutions{ end };
-str_res = cam.Resolution;
 
 %% Initialisation des variables, et du plotting
 video = snapshot( cam );

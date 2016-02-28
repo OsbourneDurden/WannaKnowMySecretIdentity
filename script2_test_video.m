@@ -4,11 +4,11 @@ clear variables;
 %% Initialisation du workspace
 addpath( genpath(pwd) ); % les sous-dossiers du projet seront inclus au path
 load( 'workspace' ) % récupération des propriétés intrinsèques de la caméra
-scale = 3; % scale est un facteur de retrécissement des images à traiter
-load( 'etc/trophycup.mat' ); % récupération du modèle à ajouter
+scale = 1; % scale est un facteur de retrécissement des images à traiter
+load( 'etc/porsche.mat' ); % récupération du modèle à ajouter
 
 %% Initialisation de la vidéo
-v = VideoReader( 'etc/test_new_mire.mp4' );
+v = VideoReader( 'etc/situation_2.mp4' );
 %nb_Frames1 = floor(v.Duration*v.FrameRate);
 
 %% Initialisation des variables, et du plotting
@@ -59,4 +59,5 @@ while hasFrame( v )
     % Affichage de la nouvelle frame
     set( h, 'Cdata', video2 );
     drawnow;
+    v.CurrentTime
 end

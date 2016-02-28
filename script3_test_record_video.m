@@ -5,18 +5,26 @@ addpath(genpath(pwd));
 load('workspace.mat')
 scale = 1;
 f = figure('visible','off');
-v = VideoReader('etc/test_mire_sd_better.mp4');
+v = VideoReader('etc/situation_2.mp4');
 nb_Frames1 = floor(v.Duration*v.FrameRate);
 v2 = VideoWriter('rendu2.mp4','MPEG-4');
 v2.FrameRate = v.FrameRate;
 open(v2);
-h = imshow(imresize(readFrame(v),1/scale));
+video2 = imresize(readFrame(v),1/scale);
+h = imshow(video2);
 hold on;
 nb_fr = 1;
 
-porsche = ply_to_patch('porsche.ply', 0.1);
+load( 'etc/porsche.mat' );
+porsche = model;
 pt = patch('Faces',porsche.faces,'Vertices',porsche.vertex,'FaceColor','none','EdgeColor','none');
 drawnow;
+
+% On doit redimensionner la matrice K (homogène) pour qu'elle corresponde à
+% la résolution de la vidéo
+size_plan_mire = size( imread('etc/img169.jpg') );
+K = redimensionnement_parametres_intriseques( K, size_plan_mire, size(video2) );
+
 time=0;
 cond = true;
 bar = waitbar(0,'Creation de la video...');
@@ -35,7 +43,7 @@ while cond
     corners = zeros(2,4);
     t3=0;t4=0;t5=0;
     if max(s) ~= 0
-        H = calcul_matrice_homographie_dlt( pts_monde , points );
+        H = dlt( pts_monde , points );
         t3 = toc(tstart);
         P2 = projection_3D_2D( K, H );
       

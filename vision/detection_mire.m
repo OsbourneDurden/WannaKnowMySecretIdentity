@@ -10,6 +10,16 @@ function [ points_plan_xoy, points_image, s ] = detection_mire( img )
 % de Matlab. Celle-ci rend les points entre les carrés d'un damier, dans un 
 % ordre auquel on peut etrouver les points_plan_xoy correspondant. 
 % On crée une matrice de ces points dans le même ordre.
+% 
+% Ordre des points de la fonction detectCheckerboardPoints :
+% http://fr.mathworks.com/help/releases/R2015b/vision/ref/checkerboard_detect.png
+%
+% References:
+% -----------
+% Andreas Geiger, Frank Moosmann, Omer Car, and Bernhard Schuster, 
+% "Automatic Camera and Range Sensor Calibration using a single Shot. 
+% In International Conference on Robotics and Automation (ICRA), St. Paul, 
+% USA, May 2012.
 
 %% Initialisation des variables
 points_plan_xoy = [];
