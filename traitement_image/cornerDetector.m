@@ -1,21 +1,29 @@
 function imgCorner = cornerDetector(imgSrc)
+% Donne un matrice de coordonnés de points à partir d'une image NdG.
+% utilise la détection de contours "edgeDetector.m"
 
-    [~, Ix, Iy] = edgeDetector (imgSrc);
+    [edges, ~, Ix, Iy] = edgeDetector (imgSrc);
+  
+    subplot(2,4,2);
+    imshow(edges);
+    hold on;
+    title('Module du gradient (passe haut gaussien)');
+    pause(0.001);
+    
 %% Matrice de Harris M   
-%    M = [   IxÂ²     ,   Ix*Iy ;
-%            Iy*Ix   ,   IxÂ²     ];
+%    M = [   Ix?     ,   Ix*Iy ;
+%            Iy*Ix   ,   Ix?     ];
 
-%% Calcul de son dÃ©terminant
+%% Calcul de son d?terminant
      Det = ( (Ix.^2) .* (Iy.^2) - (Ix .* Iy).^2 );
      
 %% Calcul de sa trace
      Trace = (Ix.^2) + (Iy.^2);
      
-%% RÃ©ponse du detecteur de Harris
+%% R?ponse du detecteur de Harris
     R = (Det - 0.04* (Trace.^2));
-
-    maxR = max(max(R,[],2)');   % valeur max de la rÃ©ponse (plus forts coins)
-    %imgCorner = (R > (mean2(R)*80)); % Seuillage avec 40% du plus fort coin
+    
+    % Seuillage
     R = R/mean2(R);
     R(R < (mean2(R)/2)) = 0;
 
@@ -26,6 +34,7 @@ function imgCorner = cornerDetector(imgSrc)
     [Height, Width] = size(R);  
     imgCorner = zeros(Height, Width);
     
+    % Trouve les max locaux dans une matrice carré de 9x9, autour de tous les coins trouvés
     for i = round(Height*0.05):9:round(Height*0.95)
         for j = round(Width*0.05):9:round(Width*0.95)
             localMax = max(max(R(i-4:i+4,j-4:j+4)));
@@ -40,8 +49,9 @@ function imgCorner = cornerDetector(imgSrc)
              end
         end
     end
+    
+    % Trouve les coordonnées des coins et les range dans imgCorner
     [I(:,2),I(:,1)] = find(imgCorner == 1);
     imgCorner = I;
     
-    %coin = sum(imgCorner(:)==1)
 end

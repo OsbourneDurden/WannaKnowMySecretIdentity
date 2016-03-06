@@ -1,4 +1,7 @@
-function [imgShape, Ix, Iy] = edgeDetector (imgSrc)
+function [GradGreylvl, imgShape, Ix, Iy] = edgeDetector (imgSrc)
+% prend l'image NdG en paramètre, calcule le filtre passe haut vu en cours.
+% Retourne le signal filtré selon x et y ainsi que l'image consituée des
+% module des gradients.
 
 greylvl = mean(imgSrc,3);
 
@@ -10,12 +13,10 @@ for i=1:15
 end
 Teta = 1.6;
 
-%% DÃ©rivÃ©e du filtre passe bas gaussien en x
+%% D?riv?e du filtre passe bas gaussien en x
 dxFx = -x./(power(Teta,3)*sqrt(2*pi)) .* exp(-power(x,2)./(2*power(Teta,2)));
 
-%plot(dxFx(1,:));
-
-%% DÃ©rivÃ©e du filtre passe bas gaussien en y
+%% D?riv?e du filtre passe bas gaussien en y
 dyFy = dxFx';
 
 %% filtrage/convolution en X
@@ -25,11 +26,12 @@ Ix = conv2(double(dxFx), double(greylvl));  % passe haut
 Iy = conv2(double(dyFy), double(greylvl));  % passe haut
 
 %% Extraction des contours avec le grad
-GradGreylvl = conv2(abs(Ix + Iy),ones(9));  % mise en forme du gradient et lissage
+GradGreylvl = sqrt(Ix.^2 + Iy.^2);  % mise en forme du gradient (module)
 
 
 maxGrad = max(max(GradGreylvl,[],2)');      % valeur max du gradient (plus fort contour)
 imgShape = (GradGreylvl>(maxGrad/10));      % Seuillage avec le dixieme du plus fort contour
 
+GradGreylvl = GradGreylvl/maxGrad;
 
 end

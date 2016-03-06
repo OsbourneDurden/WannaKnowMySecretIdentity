@@ -1,4 +1,6 @@
 function out = regroupPoints(points, distMax)
+% prend une matrice de coordonnées, et retourne une matrice ayant regroupé
+% les points étant séparé par une distance inférieur à distMax.
 
 % recherche des coins proches entre eux
     [Nm, ~] = size(points);
@@ -18,7 +20,7 @@ function out = regroupPoints(points, distMax)
             end
         end
         
-        % Pour un groupe de coins proches, Ã©tablir un point mÃ©dian
+        % Pour un groupe de coins proches, ?tablir un point m?dian
         if isempty(alias) == 0
             posMoy = mean([points(i,:) ; points(alias,:)]);
             if isempty(out)
@@ -27,7 +29,7 @@ function out = regroupPoints(points, distMax)
                 out = [out ; posMoy];             
             end
         else
-        % Si coins isolÃ©, ne rien faire 
+        % Si coins isol?, ne rien faire 
             out = [out ; points(i,:)];             
         end
     end

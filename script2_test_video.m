@@ -59,5 +59,4 @@ while hasFrame( v )
     % Affichage de la nouvelle frame
     set( h, 'Cdata', video2 );
     drawnow;
-    v.CurrentTime
 end
